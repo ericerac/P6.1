@@ -1,10 +1,15 @@
 
 const bcrypt = require('bcrypt');
+const crypto = require('crypto-js');
+//const cryptoEmail = crypto.HmacSHA256(req.body.email, "CLE_EMAIL").toString();
+//var hash = crypto.SHA256("jouet");
 const User = require('../models/user')
 const jwt = require('jsonwebtoken');
+//console.log(hash);
 
 exports.signup = (req, res, next) => {
     console.log(req.body);
+    //const cryptoEmail = crypto.HmacSHA256(req.body.email, `${process.env.CLE_CRYPTO_EMAIL}`).toString();
     bcrypt.hash(req.body.password, 8)  // 8 boucle de hash
         .then(hash =>{
             const user = new User({     // schema des données
@@ -37,7 +42,7 @@ exports.signup = (req, res, next) => {
 
 
   exports.login = (req, res, next) => {
-    User.findOne({ email: req.body.email }) // trouve l'utilisateur dans la BDD
+    User.findOne({ email: req.body.email }) // cherche l'utilisateur dans la BDD
       .then(user => {
         if (!user) {                        // si il n'existe pas renvoi l'erreur 401
           return res.status(401).json({ error: ' Compte utilisateur non trouvé !' });
@@ -53,7 +58,7 @@ exports.signup = (req, res, next) => {
                 token: jwt.sign(
                   { userId: user._id },
                   'RANDOM_TOKEN_SECRET',
-                  { expiresIn: '24h' }
+                  { expiresIn: '12h' }
                 )
               });
           })

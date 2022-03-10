@@ -19,6 +19,7 @@
   "homepage": "https://github.com/ericerac/P6#readme",
   "dependencies": {
     "bcrypt": "^5.0.1",
+    "crypto-js": "^4.1.1",
     "jsonwebtoken": "^8.5.1",
     "nodemon": "^2.0.15",
     "password-validator": "^5.2.1",

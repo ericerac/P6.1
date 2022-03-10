@@ -70,48 +70,60 @@ exports.createSauce = (req, res, next) => {
       console.log(req.body.userId)
         let user = req.body.userId;
         let like = (req.body.like);
+        let likes = salsa.likes;
         console.log(like);
         console.log(user);
         let UsersLiked = salsa.usersLiked;   //  [salsa.usersLiked] 
-        let UsersDisliked = salsa.usersDislaked;  //  [salsa.usersDisliked] 
+        let UsersDisliked = salsa.usersDisliked;  //  [salsa.usersDisliked] 
          
          let usersLiker = UsersLiked.find((l)=> l == user);  // cherche l'user dans le tableau [salsa.usersLiked] 
          let usersDisliker = UsersDisliked.find((d)=> d == user);  // cherche l'user dans le tableau [salsa.usersDisliked] 
 
          console.log(usersLiker);
-         console.log(usersDisliker);
+         //console.log(usersDisliker);
 
          if ( like == 1) {   
-           if ( usersLiker != undefined);      // si l'user est présent dans le tableau [salsa.usersLiked] 
+           if ( usersLiker != undefined){      // si l'user est présent dans le tableau [salsa.usersLiked] 
                                               // ne modifie rien
          } else {  
-          salsa.likes += 1;                             // si l'user n'est pas présent dans le tableau [salsa.usersLiked] 
+          salsa.likes ++;                      // si l'user n'est pas présent dans le tableau [salsa.usersLiked] 
           salsa.usersLiked.push(req.body.userId);      // ajoute l'user au tableau [salsa.usersLiked] 
          
          // salsa.UsersLiked = UsersLiked;
-         }
+         }}
 
-       // if ( like == 0)  {
-       //   
-       // usersLiker = usersLiker.filter((l)=> l != user);         // l'extrait du taleau [salsa.usersLiked] 
-       // usersDisliker = usersDisliker.filter((d)=> d != user);   // l'extrait du taleau [salsa.usersDisliked] 
-       // salsa.usersLiked = usersLiker;                           // redéfini le tableau [salsa.usersLiked] 
-       // salsa.usersDislaked = usersDisliker;                     // redéfini le tableau [salsa.usersDisliked] 
-       // }
+        if ( like == 0)  {
+          
+          if(usersLiker != undefined){
+            usersLiker = UsersLiked.filter((l)=> l != user);         // l'extrait du taleau [salsa.usersLiked]      
+            salsa.usersLiked = usersLiker; 
+            salsa.likes --;      
+          }else{
 
-       // if ( like == -1)  {
-       //   if (usersDisliker != undefined){
-       // usersDisliker = usersDisliker.filter((d)=> d != user); // l'extrait du taleau [salsa.usersDisliked] 
-       // salsaDisliked = usersDisliker;                         // redéfini le tableau [salsa.usersDisliked] 
-       // }}
+          };
+          if(usersDisliker != undefined){
+            usersDisliker = UsersLiked.filter((l)=> l != user);         // l'extrait du taleau [salsa.usersLiked]                  
+            salsa.usersDisliked = usersDisliker;                  // redéfini le tableau [salsa.usersLiked] 
+            salsa.disliked -- ;                                  // décrémente disliked
+          }
+        }
 
-        let uL = salsa.usersLiked;
-        let uD = salsa.usersDislaked;
-       console.log(uL,uD);
+        if ( like == -1) {
+            
+          if ( usersDisliker != undefined){      // si l'user est présent dans le tableau [salsa.usersLiked] 
+                                                 // ne modifie rien
+        } else {  
+                           // si l'user n'est pas présent dans le tableau [salsa.usersLiked] 
+         salsa.usersDisliked.push(req.body.userId);      // ajoute l'user au tableau [salsa.usersLiked] 
+         salsa.disliked ++;                            // incrémente disliked
+        
+        }}
+     
        console.log(salsa.likes);
        console.log((salsa));
        salsa.save()
-       res.status(200).json(uL.length);
+       
+       res.status(200).json();
      })
      
       .catch(error => res.status(405).json({ error }));

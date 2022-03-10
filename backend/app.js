@@ -1,4 +1,5 @@
-const dotenv = require('dotenv').config({path:'../../.env'});
+const dotenv = require('dotenv');
+dotenv.config({path:'../../.env'});
 
 const express = require('express');
 const mongoose = require('mongoose');
@@ -23,7 +24,7 @@ var corsOptions = {
     optionsSuccessStatus: 200 
   }
 
-mongoose.connect('mongodb+srv://ericerac:mongoAgogo1@cluster0.quq8c.mongodb.net/hotTakes?retryWrites=true&w=majority',
+mongoose.connect(`mongodb+srv://${process.env.DB_USERNAME}:${process.env.DB_PASSWORD}@cluster0.quq8c.mongodb.net/hotTakes?retryWrites=true&w=majority`,
     {   
     useNewUrlParser: true,
     useUnifiedTopology: true })
@@ -32,7 +33,7 @@ mongoose.connect('mongodb+srv://ericerac:mongoAgogo1@cluster0.quq8c.mongodb.net/
   .catch(() => console.log('Connexion à MongoDB échouée !'));
 
   
-
+console.log(process.env.DB_NAME);
     
 app.use((req, res, next) => {
     res.setHeader('Access-Control-Allow-Origin', '*');

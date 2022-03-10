@@ -1,11 +1,12 @@
 const express = require('express');
 const router = express.Router();
 const userControl = require('../controllers/user')
+const passWord = require('../middleWare/passValidator.js')
 
-const multer = require('../middleware/multer-config.js');
+const multer = require('../middleWare/multer-config.js');
 
 
-router.post('/signup', userControl.signup);
+router.post('/signup', passWord, userControl.signup);
 router.post('/login', userControl.login);
 
 

@@ -9,16 +9,19 @@ passwordSchema
 .has().uppercase(1)
 .has().lowercase()
 .has().digits(1)
-.has().not().space()
+.has().not().spaces()
 .has().not().symbols()
 
 module.exports = (req, res, next) => {
-    if (!passwordSchema.validated){
-        return response.json({
-        message : "le mot de passe doit contenir entre 8 et 15 caractères dont 1 chiffre et 1 majuscule"
-        })
-    } else{
-        next();
+    if (passwordSchema.validate (req.body.password)){ 
+        next()
     }
+    else {
+        res.status(400).json({
+            message: "Le mot de passe doit contenir entre 8 et 20 caractères, dont une majuscule et un chiffre, mais pas de cractères spéciaux"
+          });
+        
+        }
+     
 
 };
