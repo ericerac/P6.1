@@ -21,8 +21,10 @@ exports.createSauce = (req, res, next) => {
     const sauceObject = req.file ?
       {
         ...JSON.parse(req.body.sauces),
+        
         imageUrl: `${req.protocol}://${req.get('host')}/images/${req.file.filename}`
       } : { ...req.body };
+     
     Sauce.updateOne({ _id: req.params.id }, { ...sauceObject, _id: req.params.id })
       .then(() => res.status(200).json({ message: ' sauce  modifiée '}))
       .catch(error => res.status(400).json({ error }));
@@ -62,73 +64,95 @@ exports.createSauce = (req, res, next) => {
 
 
  exports.likeSauce =(req, res, next) => {
-     console.log("likeSewa");
+     console.log("likeSewa")
+     
+     console.log(req.body)
      
      Sauce.findOne({_id : req.params.id})
      
      .then(salsa =>{
-      console.log(req.body.userId)
+      
         let user = req.body.userId;
-        let like = (req.body.like);
-        let likes = salsa.likes;
-        console.log(like);
-        console.log(user);
+        let like = (req.body.like);      
         let UsersLiked = salsa.usersLiked;   //  [salsa.usersLiked] 
         let UsersDisliked = salsa.usersDisliked;  //  [salsa.usersDisliked] 
-         
+        let likes = salsa.likes;
+        
          let usersLiker = UsersLiked.find((l)=> l == user);  // cherche l'user dans le tableau [salsa.usersLiked] 
          let usersDisliker = UsersDisliked.find((d)=> d == user);  // cherche l'user dans le tableau [salsa.usersDisliked] 
 
          console.log(usersLiker);
-         //console.log(usersDisliker);
+         console.log(typeof(req.body.like));
 
-         if ( like == 1) {   
-           if ( usersLiker != undefined){      // si l'user est présent dans le tableau [salsa.usersLiked] 
-                                              // ne modifie rien
-         } else {  
-          salsa.likes ++;                      // si l'user n'est pas présent dans le tableau [salsa.usersLiked] 
-          salsa.usersLiked.push(req.body.userId);      // ajoute l'user au tableau [salsa.usersLiked] 
-         
-         // salsa.UsersLiked = UsersLiked;
-         }}
+         // like = 1 user pas present dans userliked-----
+         if (like > 0 && !UsersLiked.includes(user)){
+           console.log("like = 1");
+           Sauce.updateOne(
+             {_id : req.params.id},
+             {
+               $inc:{likes: 1},
+               $push: {usersLiked:user},
+             }
+           ).then(res.status(200).json())
+           .catch();
+         }
 
-        if ( like == 0)  {
-          
-          if(usersLiker != undefined){
-            usersLiker = UsersLiked.filter((l)=> l != user);         // l'extrait du taleau [salsa.usersLiked]      
-            salsa.usersLiked = usersLiker; 
-            salsa.likes --;      
-          }else{
+         // like = 0 user present dans userliked-----
 
-          };
-          if(usersDisliker != undefined){
-            usersDisliker = UsersLiked.filter((l)=> l != user);         // l'extrait du taleau [salsa.usersLiked]                  
-            salsa.usersDisliked = usersDisliker;                  // redéfini le tableau [salsa.usersLiked] 
-            salsa.disliked -- ;                                  // décrémente disliked
+         if (like === 0 && UsersLiked.includes(user)){
+           console.log("like = 0 L");
+           Sauce.updateOne(
+             {_id : req.params.id},
+             {
+               $inc:{likes: -1},
+               $pull: {usersLiked:user},
+             }
+           ).then(res.status(200).json())
+           .catch();
+         }
+
+         // like = 0 user present dans userDisliked-----
+
+         if (like === 0 && UsersDisliked.includes(user)){
+           console.log("like = 0 D");
+           Sauce.updateOne(
+             {_id : req.params.id},
+             {
+               $inc:{dislikes: -1},
+               $pull: {usersDisliked:user},
+             }
+           ).then(res.status(200).json())
+           .catch();
+         }
+
+          // like = - 1 user pas present dans userliked-----
+          if (like === -1 && !UsersDisliked.includes(user)){
+            console.log("like = -1");
+            Sauce.updateOne(
+              {_id : req.params.id},
+              {
+                $inc:{dislikes: 1},
+                $push: {usersDisliked:user},
+              }
+            ).then(res.status(200).json())
+            .catch();
           }
-        }
-
-        if ( like == -1) {
-            
-          if ( usersDisliker != undefined){      // si l'user est présent dans le tableau [salsa.usersLiked] 
-                                                 // ne modifie rien
-        } else {  
-                           // si l'user n'est pas présent dans le tableau [salsa.usersLiked] 
-         salsa.usersDisliked.push(req.body.userId);      // ajoute l'user au tableau [salsa.usersLiked] 
-         salsa.disliked ++;                            // incrémente disliked
-        
-        }}
-     
-       console.log(salsa.likes);
-       console.log((salsa));
-       salsa.save()
-       
-       res.status(200).json();
-     })
-     
+         
+        res.status(200).json();
+      })
       .catch(error => res.status(405).json({ error }));
-  }
+    }
+   const setLike = (user,like)=>{
+     
+   };
 
-  const liked = ((a,b) => {
-return a+b;
-  })
+const deleteLike = ()=>{
+     Sauce.updateOne(
+      {_id : req.params.id},
+      {
+      $inc: { likes: -1},
+      $pull: { usersLiked:req.body.userId},
+      }
+      ).then(res.status(201).json())
+      .catch(error => res.status(401).json({ error }));
+    }

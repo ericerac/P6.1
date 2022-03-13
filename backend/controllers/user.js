@@ -1,16 +1,16 @@
 
 const bcrypt = require('bcrypt');
 const crypto = require('crypto-js');
-//const cryptoEmail = crypto.HmacSHA256(req.body.email, "CLE_EMAIL").toString();
-//var hash = crypto.SHA256("jouet");
+
+
 const User = require('../models/user')
 const jwt = require('jsonwebtoken');
-//console.log(hash);
+
 
 exports.signup = (req, res, next) => {
     console.log(req.body);
     //const cryptoEmail = crypto.HmacSHA256(req.body.email, `${process.env.CLE_CRYPTO_EMAIL}`).toString();
-    bcrypt.hash(req.body.password, 8)  // 8 boucle de hash
+    bcrypt.hash(req.body.password, 8)  // 8 boucle de hash du password
         .then(hash =>{
             const user = new User({     // schema des données
                 email: req.body.email,    // récupère l'email
