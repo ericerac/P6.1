@@ -13,19 +13,20 @@ exports.createSauce = (req, res, next) => {
     });
     console.log(sauce);
     sauce.save()
-      .then(() => res.status(201).json({ message: 'Votre sauce a bien été enregistrée !'}))
+      .then(() => res.status(201).json({ message: 'sauce  enregistrée !'}))
       .catch(error => res.status(400).json({ error }));
   };
 
   exports.modifySauce = (req, res, next) => {
     const sauceObject = req.file ?
       {
-        ...JSON.parse(req.body.sauces),
+        ...JSON.parse(req.body.sauce),
         
         imageUrl: `${req.protocol}://${req.get('host')}/images/${req.file.filename}`
       } : { ...req.body };
      
     Sauce.updateOne({ _id: req.params.id }, { ...sauceObject, _id: req.params.id })
+                // 1º objet à modifier 2º nouvel objet modifié avec l'Id correspondant
       .then(() => res.status(200).json({ message: ' sauce  modifiée '}))
       .catch(error => res.status(400).json({ error }));
   };
@@ -39,7 +40,7 @@ exports.createSauce = (req, res, next) => {
         fs.unlink(`images/${filename}`, () => { // fonction du pakage fs qui supprime le fichier
           // 1º argument Nom du fichier 2º callback qui supprime l'objet de la BDD
           Sauce.deleteOne({ _id: req.params.id })
-            .then(() => res.status(200).json({ message: 'Votre sauce a été supprimée !'}))
+            .then(() => res.status(200).json({ message: 'Votre sauce supprimée !'}))
             .catch(error => res.status(400).json({ error }));
         });
       })
@@ -64,7 +65,6 @@ exports.createSauce = (req, res, next) => {
 
 
  exports.likeSauce =(req, res, next) => {
-     console.log("likeSewa")
      
      console.log(req.body)
      
@@ -76,16 +76,13 @@ exports.createSauce = (req, res, next) => {
         let like = (req.body.like);      
         let UsersLiked = salsa.usersLiked;   //  [salsa.usersLiked] 
         let UsersDisliked = salsa.usersDisliked;  //  [salsa.usersDisliked] 
-        let likes = salsa.likes;
+       
         
-         let usersLiker = UsersLiked.find((l)=> l == user);  // cherche l'user dans le tableau [salsa.usersLiked] 
-         let usersDisliker = UsersDisliked.find((d)=> d == user);  // cherche l'user dans le tableau [salsa.usersDisliked] 
-
-         console.log(usersLiker);
+         
          console.log(typeof(req.body.like));
 
          // like = 1 user pas present dans userliked-----
-         if (like > 0 && !UsersLiked.includes(user)){
+        if (like > 0 && !UsersLiked.includes(user)){
            console.log("like = 1");
            Sauce.updateOne(
              {_id : req.params.id},
