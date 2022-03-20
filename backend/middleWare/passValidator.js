@@ -5,7 +5,7 @@ const passwordSchema = new passwordValidator();
 
 passwordSchema
 .is().min(8)
-.is().max(15)
+.is().max(20)
 .has().uppercase(1)
 .has().lowercase()
 .has().digits(1)
@@ -18,7 +18,7 @@ module.exports = (req, res, next) => {
     }
     else {
         res.status(400).json({
-            message: "Le mot de passe doit contenir entre 8 et 20 caractères, dont une majuscule et un chiffre, mais pas de cractères spéciaux"
+            message: "Le mot de passe doit contenir entre 8 et 20 caractères, dont au minimum une majuscule et un chiffre, mais pas de caractères spéciaux"
           });
         
         }

@@ -9,12 +9,12 @@ const multer = require('../middleware/multer-config');
  // mettre auth au debut
 
  // comptage des like
- router.post('/:id/like', sauceControl.likeSauce)
+ router.post('/:id/like', auth, sauceControl.likeSauce)
 
 // modifier 
- router.put('/:id', auth, multer,sauceControl.modifySauce);
+ router.put('/:id', auth, multer, sauceControl.modifySauce);
 
-// Supprime 
+// Supprimer 
  router.delete('/:id', auth, sauceControl.deleteSauce );
 
  // renvoi le tableau de toute les sauces
