@@ -6,8 +6,7 @@ const crypto = require('crypto-js');
 const User = require('../models/user')
 const jwt = require('jsonwebtoken');
 const cryptoJs = require('crypto-js');
-// const cryptoEmail = "";
-// const deCryptoEmail = "";
+
 
 // -----------SIGNUP----------------
 
@@ -20,7 +19,6 @@ console.log(email);
   bcrypt.hash(req.body.password, 8)  // 8 boucle de hash du password
   .then(hash =>{
     const user = new User({     // schema des données
-      //email: cryptoEmail,  // récupère l'email chiffré
       email: req.body.email,  // récupère l'email 
       password: hash         // récupère le password chiffré
     }); 
@@ -38,7 +36,6 @@ console.log(email);
   exports.login = (req, res, next) => {
 console.log(req.body.email);
     
-
     User.findOne({ email: req.body.email}) // cherche l'utilisateur par son email dans la BDD
     
       .then(user => {
@@ -66,3 +63,6 @@ console.log(req.body.email);
       })
       .catch(error => res.status(500).json({ error })); // problème de serveur
   };
+
+
+  
